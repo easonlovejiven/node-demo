@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src *;img-src 'self' data: base64; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'" />
+    <title>首页</title>
+    <link rel="stylesheet" href="http://127.0.0.1:8000/css">
+</head>
+
+<body>
+    <div class="big">
+        <a href="/register">注册</a>
+        <a href="/login">登录</a>
+    </div>
+    <ul id="ul"></ul>
+    <ul id="ul_s">
+    </ul>
+    <script src="/jquery"></script>
+    <script src="/axios"></script>
+    <script>
+       // 判断用户是否登录
+         if(document.cookie){
+             $(".big").html("已经登录了")
+         }
+        // 这里是页面渲染的内容
+        var page = location.search
+        var page_s
+        if (page == "") {
+            page_s = 1
+        } else {
+            page_s = page.split("=")[1]
+        }
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://127.0.0.1:8000/users?page=" + page_s, true)
+        xhr.send()
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                var res = JSON.parse(xhr.responseText);
+                var ul = document.getElementById('ul');
+                var ul_s = document.getElementById('ul_s');
+                var content = "";
+                for (var i = 0; i < res.length; i++) {
+                    content += `
+                          <li>
+                              <p>
+                                <span>${res[i].name}</span>
+                                <span>${res[i].email}</span>
+                              </p>
+                        </li>
+                          `
+                }
+                ul.innerHTML = content
+            }
+        }
+    </script>
+</body>
+
+</html>
